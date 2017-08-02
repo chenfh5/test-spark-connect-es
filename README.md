@@ -12,3 +12,5 @@
 2. test elasticsearch java api client
 3. test elasticsearch ik/pinyin analyzer plugin
 4. test elasticsearch ik/pinyin combine with completion suggester
+
+## Future

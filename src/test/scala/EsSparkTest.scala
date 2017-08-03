@@ -1,9 +1,10 @@
+import org.apache.spark.sql.functions._
 import org.elasticsearch.spark.rdd.EsSpark
 import org.elasticsearch.spark.sql.EsSparkSQL
 import org.slf4j.LoggerFactory
+import org.testng.Assert._
 import org.testng.annotations.{AfterSuite, BeforeTest, Test}
 
-import io.github.chenfh5.common.OwnCaseClass
 import io.github.chenfh5.common.OwnCaseClass.Item
 import io.github.chenfh5.hadoop_spark.SparkEnvironment
 
@@ -25,7 +26,7 @@ class EsSparkTest {
 
     /*es configuration*/
     esIndexType = "spark_index" + "/spark_type"
-    esConf +=("es.nodes" -> "localhost", "es.port" -> "9200", "es.mapping.id" -> "id")
+    esConf +=("es.nodes" -> "192.168.179.55", "es.port" -> "9200", "es.mapping.id" -> "id")
   }
 
   @AfterSuite
@@ -33,7 +34,7 @@ class EsSparkTest {
     SparkEnvironment.getSparkSession.stop()
   }
 
-  @Test(enabled = false, priority = 1)
+  @Test(enabled = true, priority = 1)
   def loadlTest() = {
     val sparkSession = SparkEnvironment.getSparkSession
     import sparkSession.implicits._
@@ -50,6 +51,7 @@ class EsSparkTest {
     ).toDF("id", "name", "price", "dt")
 
     df.show()
+    assertTrue(df.agg(min("price")).head().getDouble(0) == 31.9)
   }
 
   @Test(enabled = true, priority = 2)
@@ -71,8 +73,9 @@ class EsSparkTest {
     esConf += ("es.mapping.id" -> "name")
     ds.printSchema()
     println(ds.schema)
-    EsSparkSQL.saveToEs(ds, esIndexType, esConf)
+    val output = EsSparkSQL.saveToEs(ds, esIndexType, esConf)
     LOG.info("this is the writeToEs end")
+    assertNotNull(output)
   }
 
   @Test(enabled = true, priority = 3)
@@ -90,6 +93,7 @@ class EsSparkTest {
 
     esDs.show()
     LOG.info("this is the readFromEs end")
+    assertTrue(esDs.collect().map(_.price).max == 38.9)
   }
 
 }

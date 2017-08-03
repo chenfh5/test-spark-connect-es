@@ -7,7 +7,7 @@ object OwnCaseClass {
     name: String,
     price: Double,
     dt: String
-  )  {
+  ) {
     override def toString: String = productIterator.mkString("\t\t")
   }
 

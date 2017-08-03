@@ -3,6 +3,7 @@ import scala.collection.JavaConverters._
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders._
 import org.slf4j.LoggerFactory
+import org.testng.Assert._
 import org.testng.annotations.{AfterSuite, BeforeTest, Test}
 
 import io.github.chenfh5.common.OwnCaseClass.Item
@@ -16,7 +17,7 @@ class EsJavaClientTest {
   @BeforeTest
   def setUp(): Unit = {
     /*es configuration*/
-    ips = "localhost"
+    ips = "192.168.179.55"
   }
 
   @AfterSuite
@@ -24,7 +25,10 @@ class EsJavaClientTest {
     EsClient.getEsClient.close()
   }
 
-  @Test(enabled = false, priority = 1)
+  /*
+  * directly search with exactly doc_id
+  * */
+  @Test(enabled = true, priority = 1)
   def clusterInfoTest() = {
     val response = EsClient.getEsClient.prepareGet()
         .setIndex(esIndex)
@@ -33,11 +37,14 @@ class EsJavaClientTest {
         .execute()
         .actionGet()
 
-    response.getSource.values().toArray.foreach(println)
-    LOG.info("this is the clusterInfoTest end")
-
+    val output = response.getSource
+    LOG.info("this is the clusterInfoTest={}", output)
+    assertTrue(output.get("dt") == "20170104")
   }
 
+  /*
+  * search with query-builder
+  * */
   @Test(enabled = true, priority = 1)
   def readFromEs() = {
     val pageFrom = 0
@@ -54,13 +61,8 @@ class EsJavaClientTest {
           source.getOrElse("dt", "-1").asInstanceOf[String])
     }
 
-    result.foreach(println)
-    LOG.info("this is the readFromEs end")
-  }
-
-  @Test(enabled = true, priority = 1)
-  def ikTest() = {
-
+    LOG.info("this is the readFromEs={}", result)
+    assertTrue(result.map(_.id).max == 5)
   }
 
 }

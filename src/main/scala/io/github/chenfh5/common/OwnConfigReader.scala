@@ -18,6 +18,7 @@ object OwnConfigReader {
     var javaClientPort = properties.getProperty("java.transport.client.port")
     var esIndex = properties.getProperty("es.index")
     var esType = properties.getProperty("es.type")
+    var suggesterFieldName = properties.getProperty("es.suggester.field.name")
   }
 
   def getOwnProperty = this.OwnProperty

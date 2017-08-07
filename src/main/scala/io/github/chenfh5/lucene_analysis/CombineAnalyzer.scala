@@ -9,7 +9,7 @@ object CombineAnalyzer {
   def getIkTokenAndPinyin(inputText: String, useSmart: Boolean = true) = {
     val ikTokens = IkClient.getIkTokens(inputText, useSmart)
     val ikAndPinyinList = ikTokens.flatMap(PinyinClient.getPinyinTokens)
-    ikAndPinyinList
+    ikAndPinyinList.filter(_.length > 1)
   }
 
 }

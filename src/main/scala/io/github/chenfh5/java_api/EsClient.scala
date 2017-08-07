@@ -13,9 +13,9 @@ import io.github.chenfh5.common.OwnConfigReader
 object EsClient {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
 
-  val clusterName = OwnConfigReader.getOwnProperty.clusterName
-  val ips = OwnConfigReader.getOwnProperty.ips
-  val port = OwnConfigReader.getOwnProperty.javaClientPort.toInt
+  private val clusterName = OwnConfigReader.getOwnProperty.clusterName
+  private val ips = OwnConfigReader.getOwnProperty.ips
+  private val port = OwnConfigReader.getOwnProperty.javaClientPort.toInt
 
   private val transportClient = {
     val settings = Settings

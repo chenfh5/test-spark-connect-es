@@ -13,7 +13,7 @@ object PinyinClient extends CustomAnalyzer {
 
   /*
   * @see
-  * https://github.com/medcl/elasticsearch-analysis-pinyin/tree/v1.8.2
+  * configuration -> https://github.com/medcl/elasticsearch-analysis-pinyin/tree/v1.8.2
   * */
   private lazy val pinyinSetting = {
     Settings.builder()

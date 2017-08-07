@@ -7,17 +7,21 @@ import org.elasticsearch.common.settings.Settings
 import org.elasticsearch.common.transport.InetSocketTransportAddress
 import org.slf4j.LoggerFactory
 
-import io.github.chenfh5.java_api.EsConfiguration._
+import io.github.chenfh5.common.OwnConfigReader
 
 
 object EsClient {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
 
+  val clusterName = OwnConfigReader.getOwnProperty.clusterName
+  val ips = OwnConfigReader.getOwnProperty.ips
+  val port = OwnConfigReader.getOwnProperty.javaClientPort.toInt
+
   private val transportClient = {
     val settings = Settings
         .builder()
         .put("client.transport.sniff", true)
-        .put("cluster.name", "elasticsearch")
+        .put("cluster.name", clusterName)
         .build()
 
     val transportClient = addIps(TransportClient.builder().settings(settings).build())

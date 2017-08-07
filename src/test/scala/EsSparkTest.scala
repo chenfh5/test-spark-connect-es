@@ -6,6 +6,7 @@ import org.testng.Assert._
 import org.testng.annotations.{AfterSuite, BeforeTest, Test}
 
 import io.github.chenfh5.common.OwnCaseClass.Item
+import io.github.chenfh5.common.OwnConfigReader
 import io.github.chenfh5.hadoop_spark.SparkEnvironment
 
 
@@ -25,8 +26,10 @@ class EsSparkTest {
     System.setProperty("spark.sql.shuffle.partitions", "16")
 
     /*es configuration*/
+    val eSProperties = OwnConfigReader.getOwnProperty
+
+    esConf +=("es.nodes" -> eSProperties.ips, "es.port" -> eSProperties.thirdPartyPort, "es.mapping.id" -> "id")
     esIndexType = "spark_index" + "/spark_type"
-    esConf +=("es.nodes" -> "192.168.179.55", "es.port" -> "9200", "es.mapping.id" -> "id")
   }
 
   @AfterSuite

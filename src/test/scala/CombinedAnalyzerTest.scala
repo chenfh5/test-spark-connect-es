@@ -5,7 +5,7 @@ import org.testng.annotations.Test
 import io.github.chenfh5.lucene_analysis.CombineAnalyzer
 
 
-class CombineAnalyzerTest {
+class CombinedAnalyzerTest {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
 
   @Test(enabled = true, priority = 1)
@@ -29,6 +29,6 @@ class CombineAnalyzerTest {
     val input = "People's Republic of China National Anthem zhonghuarenminguoheguoguoge 中华人民共和国国歌"
     val output = CombineAnalyzer.getIkTokenAndPinyin(input)
     LOG.info("this is the result={}", output)
-    assertTrue(Set("国歌", "gg", "zhrmghg", "Republic").subsetOf(output))
+    assertTrue(Set("国歌", "gg", "zhrmghg", "republic").subsetOf(output))
   }
 }

@@ -7,17 +7,19 @@ import org.testng.Assert._
 import org.testng.annotations.{AfterSuite, BeforeTest, Test}
 
 import io.github.chenfh5.common.OwnCaseClass.Item
-import io.github.chenfh5.java_api.EsConfiguration._
 import io.github.chenfh5.java_api.{EsClient, GetFromEs}
 
 
 class EsJavaClientTest {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
+  private var esIndex: String = _
+  private var esType: String = _
 
   @BeforeTest
   def setUp(): Unit = {
     /*es configuration*/
-    ips = "192.168.179.55"
+    esIndex = "spark_index"
+    esType = "spark_type"
   }
 
   @AfterSuite

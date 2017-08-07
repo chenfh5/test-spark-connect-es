@@ -6,6 +6,8 @@ import org.elasticsearch.index.query.QueryBuilder
 import org.elasticsearch.search.sort.SortOrder
 import org.slf4j.LoggerFactory
 
+import io.github.chenfh5.common.OwnConfigReader
+
 
 /**
   * 1. read hits from elasticsearch
@@ -14,16 +16,19 @@ import org.slf4j.LoggerFactory
   */
 object GetFromEs {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
-  private val maxPageSize = 10000 //per read action if the whole hits more than 2000
+  private val maxPageSize = 10000
+  //per read action if the whole hits more than 2000
+  private val esIndex = OwnConfigReader.getOwnProperty.esIndex
+  private val esType = OwnConfigReader.getOwnProperty.esType
 
   def run(queryBuilder: QueryBuilder, pageFrom: Int, pageSize: Int) = {
     require(pageSize < maxPageSize, s"Input pageSize=$pageSize can not exceed the maximum pageSize=$maxPageSize")
 
     val searchRequestBuilder = new SearchRequestBuilder(EsClient.getEsClient, SearchAction.INSTANCE)
-        .setIndices(EsConfiguration.esIndex)
-        .setTypes(EsConfiguration.esType)
+        .setIndices(esIndex)
+        .setTypes(esType)
         .setTimeout(TimeValue.timeValueMillis(700))
-//        .setScroll(TimeValue.timeValueMillis(700)) //TODO (scroll feature should be add or not?) -> (Answer: if setting scroll, pageFrom would lose effectiveness)
+        //        .setScroll(TimeValue.timeValueMillis(700)) //TODO (scroll feature should be add or not?) -> (Answer: if setting scroll, pageFrom would lose effectiveness)
         .setFrom(pageFrom * pageSize) //pageFrom = 0 is initial (zero corresponding to es configuration,To retrieve hits from a certain offset. Defaults to 0)
         .setSize(pageSize) //check this queryBuilder exceeding 10000 (The number of hits to return)
         .addSort("name", SortOrder.DESC)

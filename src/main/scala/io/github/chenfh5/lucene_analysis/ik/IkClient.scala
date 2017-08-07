@@ -16,7 +16,7 @@ object IkClient extends CustomAnalyzer {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
 
   private val ikSetting = {
-    val path = new File(getClass.getClassLoader.getResource("config").toURI)
+    val path = new File(getClass.getClassLoader.getResource("es-config").toURI)
     Settings.builder()
         .put("path.home", "")
         .put("path.conf", path)

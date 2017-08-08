@@ -7,6 +7,7 @@ import org.testng.Assert._
 import org.testng.annotations.{AfterSuite, BeforeTest, Test}
 
 import io.github.chenfh5.common.OwnCaseClass.Item
+import io.github.chenfh5.common.{OwnConfigReader, OwnImplicits}
 import io.github.chenfh5.java_api.{EsClient, GetFromEs}
 
 
@@ -18,8 +19,10 @@ class EsJavaClientTest {
   @BeforeTest
   def setUp(): Unit = {
     /*es configuration*/
-    esIndex = "spark_index"
-    esType = "spark_type"
+    val ownProperty = OwnConfigReader.getOwnProperty
+
+    esIndex = ownProperty.esIndex
+    esType = ownProperty.esType
   }
 
   @AfterSuite
@@ -29,8 +32,9 @@ class EsJavaClientTest {
 
   /*
   * directly search with exactly doc_id
+  * after EsSparkTest priority=3
   * */
-  @Test(enabled = true, priority = 1)
+  @Test(enabled = false, priority = 4)
   def clusterInfoTest() = {
     val response = EsClient.getEsClient.prepareGet()
         .setIndex(esIndex)
@@ -47,20 +51,24 @@ class EsJavaClientTest {
   /*
   * search with query-builder
   * */
-  @Test(enabled = true, priority = 1)
+  @Test(enabled = false, priority = 4)
   def readFromEs() = {
     val pageFrom = 0
     val pageSize = 3
     val queryBuilder = QueryBuilders.boolQuery().filter(matchAllQuery())
     val hits = GetFromEs.run(queryBuilder, pageFrom, pageSize)
 
+    import OwnImplicits._
+
     val result = hits.map {
       row =>
         val source = row.getSource.asScala
-        Item(source.getOrElse("id", -1).asInstanceOf[Int],
-          source.getOrElse("name", "-1").asInstanceOf[String],
-          source.getOrElse("price", -1).asInstanceOf[Double],
-          source.getOrElse("dt", "-1").asInstanceOf[String])
+        Item(
+          source.get("id"),
+          source.get("name"),
+          source.get("price"),
+          source.get("dt")
+        )
     }
 
     LOG.info("this is the readFromEs={}", result)

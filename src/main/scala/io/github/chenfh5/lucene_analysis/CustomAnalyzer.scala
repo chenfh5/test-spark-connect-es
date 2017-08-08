@@ -32,7 +32,7 @@ trait CustomAnalyzer {
     tokenStream.close()
 
     /*return*/
-    val output = tokenList.filter(StringUtils.isNotBlank(_)).toSet
+    val output = tokenList.filter(StringUtils.isNotBlank(_)).distinct.toList
     LOG.info("this is the outputSet={}", output)
     output
   }

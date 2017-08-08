@@ -6,14 +6,14 @@ import org.testng.Assert._
 import org.testng.annotations.{AfterSuite, BeforeTest, Test}
 
 import io.github.chenfh5.common.OwnCaseClass.Item
-import io.github.chenfh5.common.OwnConfigReader
+import io.github.chenfh5.common.{OwnConfigReader, OwnImplicits}
 import io.github.chenfh5.hadoop_spark.SparkEnvironment
 
 
 class EsSparkTest {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
+  private final val testSwitch = false
 
-  private final val testSwith = true
   private var esIndexType: String = _
   private var esConf: Map[String, String] = Map()
 
@@ -37,7 +37,7 @@ class EsSparkTest {
     SparkEnvironment.getSparkSession.stop()
   }
 
-  @Test(enabled = true, priority = 1)
+  @Test(enabled = testSwitch, priority = 1)
   def loadlTest() = {
     val sparkSession = SparkEnvironment.getSparkSession
     import sparkSession.implicits._
@@ -57,7 +57,7 @@ class EsSparkTest {
     assertTrue(df.agg(min("price")).head().getDouble(0) == 31.9)
   }
 
-  @Test(enabled = true, priority = 2)
+  @Test(enabled = testSwitch, priority = 2)
   def writeToEs() = {
     val sparkSession = SparkEnvironment.getSparkSession
     import sparkSession.implicits._
@@ -81,17 +81,20 @@ class EsSparkTest {
     assertNotNull(output)
   }
 
-  @Test(enabled = true, priority = 3)
+  @Test(enabled = testSwitch, priority = 3)
   def readFromEs() = {
     Thread.sleep(1000)
     val sparkSession = SparkEnvironment.getSparkSession
+    import OwnImplicits._
     import sparkSession.implicits._
 
     val esDs = EsSpark.esRDD(SparkEnvironment.getSparkSession.sparkContext, esIndexType, esConf).map {
-      row => Item(row._2.getOrElse("id", -1).asInstanceOf[Int],
-        row._2.getOrElse("name", "-1").asInstanceOf[String],
-        row._2.getOrElse("price", -1).asInstanceOf[Double],
-        row._2.getOrElse("dt", "-1").asInstanceOf[String])
+      row => Item(
+        row._2.get("id"),
+        row._2.get("name"),
+        row._2.get("price"),
+        row._2.get("dt")
+      )
     }.toDS()
 
     esDs.show()

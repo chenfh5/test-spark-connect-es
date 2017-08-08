@@ -12,7 +12,7 @@ import io.github.chenfh5.java_api.EsClient
 object SuggesterClient {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
 
-  private val esIndex = OwnConfigReader.getOwnProperty.esIndex
+  private val esIndex_suggest = OwnConfigReader.getOwnProperty.esIndex + "_suggest"
   private val suggesterFieldName = OwnConfigReader.getOwnProperty.suggesterFieldName
   private val suggesterSize = 11
 
@@ -25,13 +25,13 @@ object SuggesterClient {
   def getSuggesterList(query: String) = {
     /*search builder*/
     val suggestResponse = EsClient.getEsClient
-        .prepareSuggest(esIndex)
+        .prepareSuggest(esIndex_suggest)
         .addSuggestion(completionSuggestionBuilder)
         .setSuggestText(query)
         .get()
 
-
-    /*TODO:
+    /*
+        TODO:
         prefix query(suggester) between different documents should ranking,
         however here is default weight(which is 1),
         but we want suggester term can rank according to the term frequency.

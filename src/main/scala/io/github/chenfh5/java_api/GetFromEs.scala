@@ -31,7 +31,7 @@ object GetFromEs {
         //        .setScroll(TimeValue.timeValueMillis(700)) //TODO (scroll feature should be add or not?) -> (Answer: if setting scroll, pageFrom would lose effectiveness)
         .setFrom(pageFrom * pageSize) //pageFrom = 0 is initial (zero corresponding to es configuration,To retrieve hits from a certain offset. Defaults to 0)
         .setSize(pageSize) //check this queryBuilder exceeding 10000 (The number of hits to return)
-        .addSort("name", SortOrder.DESC)
+//        .addSort("name", SortOrder.DESC)
         .setQuery(queryBuilder)
 
     LOG.info("this is the search body ====>\n{}\n<====", searchRequestBuilder.toString)

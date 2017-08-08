@@ -121,7 +121,7 @@ class SparkInsertJavaSearchTest {
     )
     val suggestDocs = normalDocs.map {
       row =>
-        SuggestJson(row.item_id, CombineAnalyzer.getIkTokenAndPinyin(row.item_name).toList)
+        SuggestJson(row.item_id, CombineAnalyzer.getIkTokenAndPinyin(row.item_name))
     }
 
     val sparkSession = SparkEnvironment.getSparkSession

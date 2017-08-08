@@ -12,14 +12,14 @@ class IkTest {
   def runTest1() = {
     val input = "中国的荣耀国人的手机4g内存最低价3200元赠送手机壳"
     val output = IkClient.getIkTokens(input)
-    assertTrue(Set("中国", "荣耀", "手机", "壳").subsetOf(output))
+    assertTrue(Set("中国", "荣耀", "手机", "壳").subsetOf(output.toSet))
   }
 
   @Test(enabled = false, priority = 1)
   def runTest2() = {
     val input = "中国的荣耀国人的手机4g内存最低价3200元赠送手机壳"
     val output = IkClient.getIkTokens(input, useSmart = false)
-    assertTrue(Set("中国", "荣耀", "手机", "壳", "机壳").subsetOf(output))
+    assertTrue(Set("中国", "荣耀", "手机", "壳", "机壳").subsetOf(output.toSet))
   }
 
   @Test(enabled = false, priority = 1, expectedExceptions = Array(classOf[IllegalArgumentException]))

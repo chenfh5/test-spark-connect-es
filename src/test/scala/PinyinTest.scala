@@ -19,21 +19,21 @@ class PinyinTest {
   def runTest2() = {
     val input = "GUCCI包包LV手袋李维斯牛仔裤"
     val output = PinyinClient.getPinyinTokens(input)
-    assertTrue(Set("gucci", "lv", "guccibblvsdlwsnzk").subsetOf(output))
+    assertTrue(Set("gucci", "lv", "guccibblvsdlwsnzk").subsetOf(output.toSet))
   }
 
   @Test(enabled = false, priority = 1)
   def runTest3() = {
     val input = "iphone苹果手机"
     val output = PinyinClient.getPinyinTokens(input)
-    assertTrue(Set("iphonepgsj", "pingguoshouji", "iphone").subsetOf(output))
+    assertTrue(Set("iphonepgsj", "pingguoshouji", "iphone").subsetOf(output.toSet))
   }
 
   @Test(enabled = false, priority = 1)
   def runTest4() = {
     val input = "苹果iphone手机"
     val output = PinyinClient.getPinyinTokens(input)
-    assertTrue(Set("pgiphonesj", "pingguoshouji", "iphone").subsetOf(output))
+    assertTrue(Set("pgiphonesj", "pingguoshouji", "iphone").subsetOf(output.toSet))
   }
 
   @Test(enabled = false, priority = 1)

@@ -8,7 +8,7 @@ import io.github.chenfh5.lucene_analysis.CombineAnalyzer
 class CombinedAnalyzerTest {
   private val LOG = LoggerFactory.getLogger(getClass.getName)
 
-  @Test(enabled = true, priority = 1)
+  @Test(enabled = false, priority = 1)
   def runTest1() = {
     val input = "GUCCI包包LV手袋李维斯牛仔裤"
     val output = CombineAnalyzer.getIkTokenAndPinyin(input, useSmart = true)
@@ -16,7 +16,7 @@ class CombinedAnalyzerTest {
     assertTrue(Set("包包", "nzk", "liweisi", "lws", "niuzaiku").subsetOf(output))
   }
 
-  @Test(enabled = true, priority = 1)
+  @Test(enabled = false, priority = 1)
   def runTest2() = {
     val input = "GUCCI包包LV手袋李维斯牛仔裤"
     val output = CombineAnalyzer.getIkTokenAndPinyin(input, useSmart = false)
@@ -24,7 +24,7 @@ class CombinedAnalyzerTest {
     assertTrue(Set("gucci", "lv", "shoudai", "nz").subsetOf(output))
   }
 
-  @Test(enabled = true, priority = 1)
+  @Test(enabled = false, priority = 1)
   def runTest3() = {
     val input = "People's Republic of China National Anthem zhonghuarenminguoheguoguoge 中华人民共和国国歌"
     val output = CombineAnalyzer.getIkTokenAndPinyin(input)

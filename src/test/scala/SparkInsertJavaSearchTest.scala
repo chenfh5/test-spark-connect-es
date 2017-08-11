@@ -6,7 +6,7 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.index.query.QueryBuilders._
 import org.slf4j.LoggerFactory
 import org.testng.Assert._
-import org.testng.annotations.{BeforeTest, Test}
+import org.testng.annotations.{AfterSuite, BeforeTest, Test}
 
 import io.github.chenfh5.common.OwnCaseClass.{NormalJson, SuggestJson}
 import io.github.chenfh5.common.{OwnConfigReader, OwnImplicits}
@@ -39,9 +39,15 @@ class SparkInsertJavaSearchTest {
     esType = "item_type"
 
     val ownProperty = OwnConfigReader.getOwnProperty
+    ownProperty.clusterName = "my-cluster-ela-kib-marv-01"
     ownProperty.esIndex = "items"
     ownProperty.suggesterFieldName = "item_name_suggester"
     ownProperty.esType = "item_type"
+  }
+
+  @AfterSuite
+  def shut(): Unit = {
+    SparkEnvironment.getSparkSession.stop()
   }
 
   @Test(enabled = testSwitch, priority = 1)
@@ -62,6 +68,8 @@ class SparkInsertJavaSearchTest {
           jsonBuilder()
               .startObject()
               .startObject(esType)
+              .startObject("_source").field("enabled", true).endObject()
+              .startObject("_all").field("enabled", false).endObject()
               .startObject("properties")
               .startObject("item_id").field("type", "long").endObject()
               .startObject("item_name").field("type", "string").field("analyzer", "ik_max_word").startObject("fielddata").field("format", "paged_bytes").field("loading", "eager").endObject().endObject()
@@ -72,7 +80,7 @@ class SparkInsertJavaSearchTest {
               .endObject()
         )
         .setSettings(Settings.builder()
-            .put("index.number_of_shards", 3)
+            .put("index.number_of_shards", 1)
             .put("index.number_of_replicas", 0)
             .put("index.refresh_interval", -1)
         )
@@ -85,6 +93,8 @@ class SparkInsertJavaSearchTest {
           jsonBuilder()
               .startObject()
               .startObject(esType)
+              .startObject("_source").field("enabled", true).endObject()
+              .startObject("_all").field("enabled", false).endObject()
               .startObject("properties")
               .startObject("item_id").field("type", "long").endObject()
               .startObject("item_name_suggester").field("type", "completion").field("preserve_position_increments", "false").endObject()
@@ -93,7 +103,7 @@ class SparkInsertJavaSearchTest {
               .endObject()
         )
         .setSettings(Settings.builder()
-            .put("index.number_of_shards", 3)
+            .put("index.number_of_shards", 1)
             .put("index.number_of_replicas", 0)
             .put("index.refresh_interval", -1)
         )
@@ -145,15 +155,15 @@ class SparkInsertJavaSearchTest {
     Thread.sleep(1000 * 2)
     val normalSetting = EsClient.getEsClient.admin().indices().prepareUpdateSettings(esIndex)
         .setSettings(Settings.builder()
-            .put("index.number_of_replicas", 1)
-            .put("index.refresh_interval", 10, TimeUnit.SECONDS)
+            .put("index.number_of_replicas", 0)
+            .put("index.refresh_interval", 1, TimeUnit.SECONDS)
         )
         .get()
 
     val suggestSetting = EsClient.getEsClient.admin().indices().prepareUpdateSettings(esIndex_suggest)
         .setSettings(Settings.builder()
-            .put("index.number_of_replicas", 1)
-            .put("index.refresh_interval", 10, TimeUnit.SECONDS)
+            .put("index.number_of_replicas", 0)
+            .put("index.refresh_interval", 1, TimeUnit.SECONDS)
         )
         .get()
 
